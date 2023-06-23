@@ -40,7 +40,11 @@ class App extends React.Component {
   handleFormSubmit(form) {
     post('notes/', { text: form.text })
       .then((data) => {
-        this.setState({ notes: data });
+        get('notes/')
+          .then((data) => {
+            this.setState({ notes: data });
+          })
+          .catch((error) => console.log("Could not load notes", error));
       })
       .catch((error) => console.log("Could not upload the note", error));
 
@@ -55,11 +59,27 @@ class App extends React.Component {
       .catch((error) => console.log("Could not delete the note", error));
   }
 
+  handleRefresh() {
+    get('notes/')
+      .then((data) => {
+        this.setState({ notes: data });
+      })
+      .catch((error) => console.log("Could not load notes", error));
+  }
+
   render() {
     return (
       <div>
         <div className="wrapper">
-          <h1 className="title">Notes</h1>
+          <div className="title-container">
+            <h1>Notes</h1>
+            <button 
+              className="button-refresh"
+              onClick={this.handleRefresh}
+            >
+                &#8635;
+            </button>
+          </div>
           <div className="notes-container">
             {this.state.notes.map((note) => {
               return (
