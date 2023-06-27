@@ -15,10 +15,11 @@ class App extends React.Component {
     this.handleFormChange = this.handleFormChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
   }
 
   componentDidMount() {
-    get('notes/')
+    get('notes')
       .then((data) => {
         this.setState({ notes: data });
       })
@@ -38,7 +39,7 @@ class App extends React.Component {
   }
 
   handleFormSubmit(form) {
-    post('notes/', { text: form.text })
+    post('notes', { text: form.text })
       .then((data) => {
         get('notes/')
           .then((data) => {
@@ -52,15 +53,19 @@ class App extends React.Component {
   }
 
   handleDeleteClick(id) {
-    del(`notes/${id}`, { text: this.state.form.text })
+    del(`notes/${id}`)
       .then((data) => {
-        this.setState({ notes: data });
+        get('notes')
+          .then((data) => {
+            this.setState({ notes: data });
+        })
+      .catch((error) => console.log("Could not load notes", error));
       })
       .catch((error) => console.log("Could not delete the note", error));
   }
 
   handleRefresh() {
-    get('notes/')
+    get('notes')
       .then((data) => {
         this.setState({ notes: data });
       })
@@ -81,7 +86,7 @@ class App extends React.Component {
             </button>
           </div>
           <div className="notes-container">
-            {this.state.notes.map((note) => {
+            {Array.from(this.state.notes).map((note) => {
               return (
                 <Note
                   key={note.id}

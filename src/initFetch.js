@@ -26,7 +26,7 @@ export default function initFetch(baseUrl) {
             body: JSON.stringify(body),
           },
         })
-          .then((response) => response.json())
+          .then((response) => response)
           .then((data) => {
             if (!data) {
               return reject(data);
@@ -42,7 +42,7 @@ export default function initFetch(baseUrl) {
     function del(url) {
       return new Promise((resolve, reject) => {
         fetch(baseUrl + url, { method: "delete" })
-          .then((response) => response.json())
+          .then((response) => response)
           .then((data) => {
             if (!data) {
               return reject(data);
